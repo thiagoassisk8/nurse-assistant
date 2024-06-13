@@ -5,6 +5,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from '../entities/user.entity'; // Atualize o caminho conforme necessário
 
 @Module({
   imports: [
@@ -13,6 +15,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       secret: 'abc123',
       signOptions: { expiresIn: '1h' },
     }),
+    TypeOrmModule.forFeature([User]), // Registre a entidade User
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
