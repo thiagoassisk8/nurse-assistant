@@ -19,8 +19,8 @@ const mockdata = [
 export class AuthService {
   constructor(private jwtService: JwtService) {}
 
-  validateUser({ username, password }: AuthPayloadDto) {
-    const findUser = mockdata.find((user) => user.username === username);
+  validateUser({ name, password }: AuthPayloadDto) {
+    const findUser = mockdata.find((user) => user.username === name);
     if (!findUser) return null;
     if (password === findUser.password) {
       const { password, ...user } = findUser;
