@@ -8,19 +8,16 @@ import { Connection } from 'typeorm';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, 
+      isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_DATABASE'),
+        url: configService.get<string>('DATABASE_URL'), // Use DATABASE_URL provided by Heroku
+        synchronize: true, // Only for development, disable in production
+        logging: true, // Enable for debugging purposes
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true, 
       }),
       inject: [ConfigService],
     }),
@@ -34,7 +31,7 @@ export class AppModule implements OnModuleInit {
   constructor(private readonly connection: Connection) {}
 
   async onModuleInit() {
-    const isConnected = this.connection.isInitialized;
+    const isConnected = this.connection.isConnected;
     if (isConnected) {
       this.logger.log('Conexão com o banco de dados estabelecida com sucesso!');
     } else {
