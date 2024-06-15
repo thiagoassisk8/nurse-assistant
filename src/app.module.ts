@@ -1,5 +1,5 @@
 import { Module, OnModuleInit, Logger } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -8,18 +8,23 @@ import { Connection } from 'typeorm';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true, 
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: async (configService: ConfigService): Promise<TypeOrmModuleOptions> => ({
         type: 'postgres',
-        url: configService.get<string>('DATABASE_URL'), // Use DATABASE_URL provided by Heroku
-        synchronize: true, // Only for development, disable in production
-        logging: true, // Enable for debugging purposes
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        url: configService.get<string>('DATABASE_URL'), 
+        host: configService.get<string>('DB_HOST') || undefined,
+        port: parseInt(configService.get<string>('DB_PORT'), 10) || undefined,
+        username: configService.get<string>('DB_USERNAME') || undefined,
+        password: configService.get<string>('DB_PASSWORD') || undefined,
+        database: configService.get<string>('DB_DATABASE') || undefined,
+        synchronize: true,
+        logging: true, 
+        entities: [__dirname + '/**/*.entity{.ts,.js}'], //
       }),
-      inject: [ConfigService],
+      inject: [ConfigService], 
     }),
     AuthModule,
     UsersModule,
