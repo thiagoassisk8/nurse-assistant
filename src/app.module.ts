@@ -19,7 +19,7 @@ import { User } from './entities/user.entity';
           rejectUnauthorized: true,
           ca: configService.get<string>('DB_CA_CERT'),
         },
-        synchronize: false,
+        synchronize: true,
         logging: true,
         entities: [User], 
       }),
