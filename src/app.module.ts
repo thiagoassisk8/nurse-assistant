@@ -1,10 +1,8 @@
-import { Module, OnModuleInit, Logger } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module'
-
-
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -13,13 +11,22 @@ import { UsersModule } from './users/users.module'
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        type: 'postgres',
-        url: configService.get<string>('DATABASE_URL'),
-        synchronize: true, 
-        logging: true, 
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const databaseUrl = configService.get<string>('DB_DATABASE_URL');
+        
+        return {
+          type: 'postgres',
+          url: databaseUrl || undefined,
+          host: !databaseUrl ? configService.get<string>('DB_HOST') : undefined,
+          port: !databaseUrl ? configService.get<number>('DB_PORT') : undefined,
+          username: !databaseUrl ? configService.get<string>('DB_USERNAME') : undefined,
+          password: !databaseUrl ? configService.get<string>('DB_PASSWORD') : undefined,
+          database: !databaseUrl ? configService.get<string>('DB_DATABASE') : undefined,
+          synchronize: false,
+          logging: true,
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        };
+      },
       inject: [ConfigService],
     }),
     AuthModule,
