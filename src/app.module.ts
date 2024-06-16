@@ -11,22 +11,17 @@ import { UsersModule } from './users/users.module';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => {
-        const databaseUrl = configService.get<string>('DB_DATABASE_URL');
-        
-        return {
-          type: 'postgres',
-          url: databaseUrl || undefined,
-          host: !databaseUrl ? configService.get<string>('DB_HOST') : undefined,
-          port: !databaseUrl ? configService.get<number>('DB_PORT') : undefined,
-          username: !databaseUrl ? configService.get<string>('DB_USERNAME') : undefined,
-          password: !databaseUrl ? configService.get<string>('DB_PASSWORD') : undefined,
-          database: !databaseUrl ? configService.get<string>('DB_DATABASE') : undefined,
-          synchronize: false,
-          logging: true,
-          entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        };
-      },
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
+        url: configService.get<string>('DB_DATABASE_URL'),
+        ssl: {
+          rejectUnauthorized: true,
+          ca: configService.get<string>('DB_CA_CERT'),
+        },
+        synchronize: false,
+        logging: true,
+        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      }),
       inject: [ConfigService],
     }),
     AuthModule,
