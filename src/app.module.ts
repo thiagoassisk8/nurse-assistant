@@ -1,8 +1,9 @@
-import { Module, Logger } from '@nestjs/common';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { Module, OnModuleInit, Logger } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { Connection } from 'typeorm';
 
 @Module({
   imports: [
@@ -11,13 +12,9 @@ import { UsersModule } from './users/users.module';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService): Promise<TypeOrmModuleOptions> => ({
+      useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: parseInt(configService.get<string>('DB_PORT'), 10),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_DATABASE'),
+        url: configService.get<string>('DATABASE_URL'),
         synchronize: true, 
         logging: true, 
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
@@ -28,11 +25,17 @@ import { UsersModule } from './users/users.module';
     UsersModule,
   ],
 })
-export class AppModule {
-
+export class AppModule implements OnModuleInit {
   private readonly logger = new Logger(AppModule.name);
 
-  constructor() {}
+  constructor(private readonly connection: Connection) {}
 
-  
+  async onModuleInit() {
+    const isConnected = this.connection.isConnected;
+    if (isConnected) {
+      this.logger.log('Conexão com o banco de dados estabelecida com sucesso!');
+    } else {
+      this.logger.error('Falha ao conectar com o banco de dados.');
+    }
+  }
 }
