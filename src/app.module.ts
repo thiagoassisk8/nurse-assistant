@@ -14,7 +14,7 @@ import { Connection } from 'typeorm';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService): Promise<TypeOrmModuleOptions> => ({
         type: 'postgres',
-        url: configService.get<string>('DATABASE_URL'), 
+        
         host: configService.get<string>('DB_HOST') || undefined,
         port: parseInt(configService.get<string>('DB_PORT'), 10) || undefined,
         username: configService.get<string>('DB_USERNAME') || undefined,
