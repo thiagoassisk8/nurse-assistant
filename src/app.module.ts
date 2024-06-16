@@ -31,7 +31,7 @@ export class AppModule implements OnModuleInit {
   constructor(private readonly connection: Connection) {}
 
   async onModuleInit() {
-    const isConnected = this.connection.isConnected;
+    const isConnected = this.connection.isInitialized;
     if (isConnected) {
       this.logger.log('Conexão com o banco de dados estabelecida com sucesso!');
     } else {
