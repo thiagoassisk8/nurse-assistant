@@ -82,8 +82,6 @@ For more details and advanced usage of this backend API, refer to the [frontend 
 
 This backend was developed as part of a nurse marketplace application, focusing on user registration, login, and JWT-based session management.
 
-For any questions or additional support, please contact [your_email@example.com](mailto:your_email@example.com).
-
 ```
 
 ```
