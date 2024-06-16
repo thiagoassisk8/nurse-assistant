@@ -2,8 +2,9 @@ import { Module, OnModuleInit, Logger } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
-import { UsersModule } from './users/users.module';
-import { Connection } from 'typeorm';
+import { UsersModule } from './users/users.module'
+
+
 
 @Module({
   imports: [
@@ -25,17 +26,4 @@ import { Connection } from 'typeorm';
     UsersModule,
   ],
 })
-export class AppModule implements OnModuleInit {
-  private readonly logger = new Logger(AppModule.name);
-
-  constructor(private readonly connection: Connection) {}
-
-  async onModuleInit() {
-    const isConnected = this.connection.isInitialized;
-    if (isConnected) {
-      this.logger.log('Conexão com o banco de dados estabelecida com sucesso!');
-    } else {
-      this.logger.error('Falha ao conectar com o banco de dados.');
-    }
-  }
-}
+export class AppModule {}
