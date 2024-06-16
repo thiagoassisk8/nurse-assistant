@@ -12,9 +12,9 @@ export class AuthController {
   @Post('login')
   @UseGuards(LocalGuard)
   async login(@Req() req: Request) {
-    // After successful authentication, req.user should contain the authenticated user object
+    
     const token = req.user;
-    // Return a JSON response with the user data or an error message
+    
     return token ? { token } : { message: 'Authentication failed' };
   }
 
