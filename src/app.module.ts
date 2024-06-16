@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { User } from './entities/user.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { UsersModule } from './users/users.module';
         },
         synchronize: false,
         logging: true,
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        entities: [User], 
       }),
       inject: [ConfigService],
     }),
