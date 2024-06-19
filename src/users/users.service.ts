@@ -30,7 +30,7 @@ export class UsersService {
     return this.userRepository.findOne({ where: { email } });
   }
 
-  // Uncommented findById method for completeness
+  //  findById method for completeness
 //   async findById(id: number): Promise<User | undefined> {
 //     return this.userRepository.findOne(id);
 //   }

@@ -15,7 +15,7 @@ import { User } from '../entities/user.entity';
       secret: 'abc123',
       signOptions: { expiresIn: '1h' },
     }),
-    TypeOrmModule.forFeature([User]), // Registre a entidade User
+    TypeOrmModule.forFeature([User]), 
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],

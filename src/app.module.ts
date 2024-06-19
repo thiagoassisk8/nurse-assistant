@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { User } from './entities/user.entity';
 
 @Module({
   imports: [
@@ -12,17 +11,22 @@ import { User } from './entities/user.entity';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        type: 'postgres',
-        url: configService.get<string>('DB_DATABASE_URL'),
-        ssl: {
-          rejectUnauthorized: true,
-          ca: configService.get<string>('DB_CA_CERT'),
-        },
-        synchronize: true,
-        logging: true,
-        entities: [User], 
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const databaseUrl = configService.get<string>('DB_DATABASE_URL');
+        
+        return {
+          type: 'postgres',
+          url: databaseUrl || undefined,
+          host: !databaseUrl ? configService.get<string>('DB_HOST') : undefined,
+          port: !databaseUrl ? configService.get<number>('DB_PORT') : undefined,
+          username: !databaseUrl ? configService.get<string>('DB_USERNAME') : undefined,
+          password: !databaseUrl ? configService.get<string>('DB_PASSWORD') : undefined,
+          database: !databaseUrl ? configService.get<string>('DB_DATABASE') : undefined,
+          synchronize: false,
+          logging: true,
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        };
+      },
       inject: [ConfigService],
     }),
     AuthModule,
